@@ -1,0 +1,58 @@
+name: Update Formula
+
+on:
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get latest version from npm
+        id: npm
+        run: |
+          VERSION=$(curl -s https://registry.npmjs.org/denvig/latest | jq -r '.version')
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Check if update is needed
+        id: check
+        run: |
+          CURRENT=$(grep -oP 'denvig-\K[0-9.]+(?=\.tgz)' Formula/denvig.rb)
+          if [ "$CURRENT" = "${{ steps.npm.outputs.version }}" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "Already up to date ($CURRENT)"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+            echo "Updating $CURRENT -> ${{ steps.npm.outputs.version }}"
+          fi
+
+      - name: Update formula
+        if: steps.check.outputs.skip == 'false'
+        run: |
+          VERSION="${{ steps.npm.outputs.version }}"
+          URL="https://registry.npmjs.org/denvig/-/denvig-${VERSION}.tgz"
+          SHA256=$(curl -sL "$URL" | shasum -a 256 | awk '{print $1}')
+
+          sed -i "s|url \".*\"|url \"${URL}\"|" Formula/denvig.rb
+          sed -i "s|sha256 \".*\"|sha256 \"${SHA256}\"|" Formula/denvig.rb
+
+      - name: Create pull request
+        if: steps.check.outputs.skip == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION="${{ steps.npm.outputs.version }}"
+          BRANCH="update-v${VERSION}"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add Formula/denvig.rb
+          git commit -m "v${VERSION}"
+          git push -u origin "$BRANCH"
+
+          gh pr create \
+            --title "v${VERSION}" \
+            --body "Updates denvig formula to v${VERSION}" \
+            --base main
