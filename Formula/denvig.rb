@@ -10,6 +10,8 @@ class Denvig < Formula
   def install
     system "npm", "install", *std_npm_args
     bin.install_symlink libexec.glob("bin/*")
+
+    generate_completions_from_executable(bin/"denvig", "zsh", "completions")
   end
 
   test do
