@@ -1,8 +1,8 @@
 class Denvig < Formula
   desc "A CLI tool to consistently manage cross-discipline projects"
   homepage "https://denvig.com"
-  url "https://registry.npmjs.org/denvig/-/denvig-0.6.3.tgz"
-  sha256 "0391855fc034ff031202254eaef0ad092d68625dd95af6cf62d31c6a815afbcf"
+  url "https://registry.npmjs.org/denvig/-/denvig-0.6.4.tgz"
+  sha256 "b244ef094914b70a05d5c0265bf703b410246c5900db390a88edf9b38c34a8d4"
   license "MIT"
 
   depends_on "node"
