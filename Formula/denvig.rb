@@ -5,6 +5,13 @@ class Denvig < Formula
   sha256 "c9840b6bb54c02343a7e98fa1b831c185605c30f2ebee81aaf0d0d3eed5c33a0"
   license "MIT"
 
+  livecheck do
+    url "https://registry.npmjs.org/denvig/latest"
+    strategy :json do |json|
+      json["version"]
+    end
+  end
+
   depends_on "node"
 
   def install
