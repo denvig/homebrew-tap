@@ -1,4 +1,4 @@
-class DenvigATalpha < Formula
+class DenvigAlpha < Formula
   desc "A CLI tool to consistently manage cross-discipline projects (alpha)"
   homepage "https://denvig.com"
   url "https://registry.npmjs.org/denvig/-/denvig-0.7.0-alpha.2.tgz"
@@ -12,7 +12,7 @@ class DenvigATalpha < Formula
     end
   end
 
-  keg_only :versioned_formula
+  keg_only "this formula tracks the pre-release `alpha` npm dist-tag; conflicts with `denvig`"
 
   depends_on "node"
 
