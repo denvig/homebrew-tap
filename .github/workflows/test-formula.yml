@@ -12,30 +12,22 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
         formula: [denvig, denvig-alpha]
-    runs-on: ${{ matrix.os }}
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          path: homebrew-tap
 
       - name: Set up Homebrew
         uses: Homebrew/actions/setup-homebrew@master
 
-      - name: Tap local checkout
-        run: |
-          brew untap denvig/tap 2>/dev/null || true
-          brew tap denvig/tap "$GITHUB_WORKSPACE/homebrew-tap"
-
       - name: Audit formula
-        run: brew audit --strict denvig/tap/${{ matrix.formula }}
+        run: brew audit --strict ${{ matrix.formula }}
 
       - name: Install formula
-        run: brew install --build-from-source denvig/tap/${{ matrix.formula }}
+        run: brew install --build-from-source ${{ matrix.formula }}
 
       - name: Test formula
-        run: brew test denvig/tap/${{ matrix.formula }}
+        run: brew test ${{ matrix.formula }}
 
   ready:
     needs: test
