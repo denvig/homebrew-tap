@@ -6,19 +6,27 @@ on:
 jobs:
   update:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - tag: latest
+            formula: Formula/denvig.rb
+          - tag: alpha
+            formula: Formula/denvig@alpha.rb
     steps:
       - uses: actions/checkout@v4
 
-      - name: Get latest version from npm
+      - name: Get version from npm
         id: npm
         run: |
-          VERSION=$(curl -s https://registry.npmjs.org/denvig/latest | jq -r '.version')
+          VERSION=$(curl -s "https://registry.npmjs.org/denvig/${{ matrix.tag }}" | jq -r '.version')
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Check if update is needed
         id: check
         run: |
-          CURRENT=$(grep -oP 'denvig-\K[0-9.]+(?=\.tgz)' Formula/denvig.rb)
+          CURRENT=$(grep -oP 'denvig-\K[^"]+(?=\.tgz)' "${{ matrix.formula }}")
           if [ "$CURRENT" = "${{ steps.npm.outputs.version }}" ]; then
             echo "skip=true" >> "$GITHUB_OUTPUT"
             echo "Already up to date ($CURRENT)"
@@ -34,8 +42,11 @@ jobs:
           URL="https://registry.npmjs.org/denvig/-/denvig-${VERSION}.tgz"
           SHA256=$(curl -sL "$URL" | shasum -a 256 | awk '{print $1}')
 
-          sed -i "s|url \".*\"|url \"${URL}\"|" Formula/denvig.rb
-          sed -i "s|sha256 \".*\"|sha256 \"${SHA256}\"|" Formula/denvig.rb
+          sed -i "s|url \".*\"|url \"${URL}\"|" "${{ matrix.formula }}"
+          sed -i "s|sha256 \".*\"|sha256 \"${SHA256}\"|" "${{ matrix.formula }}"
+          if grep -q '^  version ' "${{ matrix.formula }}"; then
+            sed -i "s|^  version \".*\"|  version \"${VERSION}\"|" "${{ matrix.formula }}"
+          fi
 
       - name: Create pull request
         if: steps.check.outputs.skip == 'false'
@@ -43,16 +54,17 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           VERSION="${{ steps.npm.outputs.version }}"
-          BRANCH="update-v${VERSION}"
+          TAG="${{ matrix.tag }}"
+          BRANCH="update-${TAG}-v${VERSION}"
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git checkout -b "$BRANCH"
-          git add Formula/denvig.rb
-          git commit -m "v${VERSION}"
+          git add "${{ matrix.formula }}"
+          git commit -m "v${VERSION} (${TAG})"
           git push -u origin "$BRANCH"
 
           gh pr create \
-            --title "v${VERSION}" \
-            --body "Updates denvig formula to v${VERSION}" \
+            --title "v${VERSION} (${TAG})" \
+            --body "Updates denvig \`${TAG}\` formula to v${VERSION}" \
             --base main
