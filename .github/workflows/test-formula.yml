@@ -1,0 +1,31 @@
+name: Test Formula
+
+on:
+  pull_request:
+    paths:
+      - 'Formula/*.rb'
+      - '.github/workflows/test-formula.yml'
+  workflow_dispatch:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+        formula: [denvig, denvig-alpha]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Homebrew
+        uses: Homebrew/actions/setup-homebrew@master
+
+      - name: Audit formula
+        run: brew audit --strict ${{ matrix.formula }}
+
+      - name: Install formula
+        run: brew install --build-from-source ${{ matrix.formula }}
+
+      - name: Test formula
+        run: brew test ${{ matrix.formula }}

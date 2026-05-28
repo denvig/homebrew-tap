@@ -62,6 +62,7 @@ jobs:
           git push -u origin "$BRANCH"
 
           gh pr create \
+            --draft \
             --title "v${VERSION} (${TAG})" \
             --body "Updates denvig \`${TAG}\` formula to v${VERSION}" \
             --base main

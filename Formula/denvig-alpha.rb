@@ -20,7 +20,7 @@ class DenvigAlpha < Formula
     system "npm", "install", *std_npm_args
     bin.install_symlink libexec.glob("bin/*")
 
-    generate_completions_from_executable(bin/"denvig", "zsh", "completions")
+    generate_completions_from_executable(bin/"denvig", "zsh", "completions", shells: [:zsh], shell_parameter_format: :none)
   end
 
   test do
