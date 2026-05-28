@@ -28,15 +28,3 @@ jobs:
 
       - name: Test formula
         run: brew test ${{ matrix.formula }}
-
-  ready:
-    needs: test
-    if: github.event_name == 'pull_request' && github.event.pull_request.draft == true
-    runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
-    steps:
-      - name: Mark PR ready for review
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh pr ready ${{ github.event.pull_request.number }} --repo ${{ github.repository }}
