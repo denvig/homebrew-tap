@@ -13,7 +13,7 @@ jobs:
           - tag: latest
             formula: Formula/denvig.rb
           - tag: alpha
-            formula: Formula/denvig@alpha.rb
+            formula: Formula/denvig-alpha.rb
     steps:
       - uses: actions/checkout@v4
 
