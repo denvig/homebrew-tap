@@ -1,10 +1,9 @@
-class DenvigATAlpha < Formula
+class DenvigATalpha < Formula
   desc "A CLI tool to consistently manage cross-discipline projects (alpha)"
   homepage "https://denvig.com"
   url "https://registry.npmjs.org/denvig/-/denvig-0.7.0-alpha.2.tgz"
   sha256 "e39ca761afe5b5da8a9f82a4e353c249e785fb6e06e0a1aeaec205aa3b6ff8dc"
   license "MIT"
-  version "0.7.0-alpha.2"
 
   livecheck do
     url "https://registry.npmjs.org/denvig/alpha"
@@ -13,9 +12,9 @@ class DenvigATAlpha < Formula
     end
   end
 
-  depends_on "node"
+  keg_only :versioned_formula
 
-  conflicts_with "denvig", because: "both install `denvig` binaries"
+  depends_on "node"
 
   def install
     system "npm", "install", *std_npm_args
