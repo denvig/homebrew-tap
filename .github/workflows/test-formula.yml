@@ -1,0 +1,43 @@
+name: Test Formula
+
+on:
+  pull_request:
+    paths:
+      - 'Formula/*.rb'
+      - '.github/workflows/test-formula.yml'
+  workflow_dispatch:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        formula: [denvig, denvig-alpha]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Homebrew
+        uses: Homebrew/actions/setup-homebrew@master
+
+      - name: Audit formula
+        run: brew audit --strict --formula ./Formula/${{ matrix.formula }}.rb
+
+      - name: Install formula
+        run: brew install --build-from-source ./Formula/${{ matrix.formula }}.rb
+
+      - name: Test formula
+        run: brew test ./Formula/${{ matrix.formula }}.rb
+
+  ready:
+    needs: test
+    if: github.event_name == 'pull_request' && github.event.pull_request.draft == true
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Mark PR ready for review
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh pr ready ${{ github.event.pull_request.number }} --repo ${{ github.repository }}
