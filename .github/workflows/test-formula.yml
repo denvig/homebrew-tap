@@ -17,18 +17,23 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          path: homebrew-tap
 
       - name: Set up Homebrew
         uses: Homebrew/actions/setup-homebrew@master
 
+      - name: Tap local checkout
+        run: brew tap denvig/tap "$GITHUB_WORKSPACE/homebrew-tap"
+
       - name: Audit formula
-        run: brew audit --strict --formula ./Formula/${{ matrix.formula }}.rb
+        run: brew audit --strict denvig/tap/${{ matrix.formula }}
 
       - name: Install formula
-        run: brew install --build-from-source ./Formula/${{ matrix.formula }}.rb
+        run: brew install --build-from-source denvig/tap/${{ matrix.formula }}
 
       - name: Test formula
-        run: brew test ./Formula/${{ matrix.formula }}.rb
+        run: brew test denvig/tap/${{ matrix.formula }}
 
   ready:
     needs: test
