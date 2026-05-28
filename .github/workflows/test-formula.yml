@@ -24,7 +24,9 @@ jobs:
         uses: Homebrew/actions/setup-homebrew@master
 
       - name: Tap local checkout
-        run: brew tap denvig/tap "$GITHUB_WORKSPACE/homebrew-tap"
+        run: |
+          brew untap denvig/tap 2>/dev/null || true
+          brew tap denvig/tap "$GITHUB_WORKSPACE/homebrew-tap"
 
       - name: Audit formula
         run: brew audit --strict denvig/tap/${{ matrix.formula }}
