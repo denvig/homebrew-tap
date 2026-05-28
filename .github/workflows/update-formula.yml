@@ -44,9 +44,6 @@ jobs:
 
           sed -i "s|url \".*\"|url \"${URL}\"|" "${{ matrix.formula }}"
           sed -i "s|sha256 \".*\"|sha256 \"${SHA256}\"|" "${{ matrix.formula }}"
-          if grep -q '^  version ' "${{ matrix.formula }}"; then
-            sed -i "s|^  version \".*\"|  version \"${VERSION}\"|" "${{ matrix.formula }}"
-          fi
 
       - name: Create pull request
         if: steps.check.outputs.skip == 'false'
