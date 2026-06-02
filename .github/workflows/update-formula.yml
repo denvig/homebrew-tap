@@ -42,7 +42,7 @@ jobs:
           URL="https://registry.npmjs.org/denvig/-/denvig-${VERSION}.tgz"
           SHA256=$(curl -sL "$URL" | shasum -a 256 | awk '{print $1}')
 
-          sed -i "s|url \".*\"|url \"${URL}\"|" "${{ matrix.formula }}"
+          sed -i "s|url \"https://registry.npmjs.org/denvig/-/.*\"|url \"${URL}\"|" "${{ matrix.formula }}"
           sed -i "s|sha256 \".*\"|sha256 \"${SHA256}\"|" "${{ matrix.formula }}"
 
       - name: Create pull request
