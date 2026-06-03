@@ -16,6 +16,11 @@ jobs:
             formula: Formula/denvig-alpha.rb
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Use a PAT (not the default GITHUB_TOKEN) so the PR this workflow
+          # opens triggers the test-formula workflow. PRs created with
+          # GITHUB_TOKEN do not trigger further workflow runs.
+          token: ${{ secrets.FORMULA_UPDATE_TOKEN }}
 
       - name: Get version from npm
         id: npm
@@ -48,7 +53,7 @@ jobs:
       - name: Create pull request
         if: steps.check.outputs.skip == 'false'
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.FORMULA_UPDATE_TOKEN }}
         run: |
           VERSION="${{ steps.npm.outputs.version }}"
           TAG="${{ matrix.tag }}"
