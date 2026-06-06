@@ -1,8 +1,8 @@
 class DenvigAlpha < Formula
   desc "A CLI tool to consistently manage cross-discipline projects (alpha)"
   homepage "https://denvig.com"
-  url "https://registry.npmjs.org/denvig/-/denvig-0.7.0-alpha.3.tgz"
-  sha256 "3219ff1b9a526b0d90151ca84dac2895f3cc7fc7ab632dcd4adb38466e8b7dba"
+  url "https://registry.npmjs.org/denvig/-/denvig-0.7.0-alpha.4.tgz"
+  sha256 "807c1c819ac3e3d8077721f1450518a06be5c263d806e89299143c2084b2eebb"
   license "MIT"
 
   livecheck do
