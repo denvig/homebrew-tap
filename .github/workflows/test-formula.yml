@@ -29,3 +29,14 @@ jobs:
 
       - name: Test formula
         run: brew test ${{ matrix.formula }}
+
+      - name: Verify installed binary
+        run: |
+          # denvig-alpha is keg-only, so resolve the binary via its opt prefix
+          # rather than relying on it being symlinked onto PATH.
+          BIN="$(brew --prefix ${{ matrix.formula }})/bin/denvig"
+          EXPECTED=$(sed -nE 's#.*/denvig-([^"/]+)\.tgz".*#\1#p' "Formula/${{ matrix.formula }}.rb" | head -1)
+          echo "Expecting version: $EXPECTED"
+          ACTUAL="$("$BIN" --version)"
+          echo "denvig --version -> $ACTUAL"
+          echo "$ACTUAL" | grep -qF "$EXPECTED"

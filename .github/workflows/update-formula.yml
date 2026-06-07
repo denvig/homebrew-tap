@@ -31,7 +31,8 @@ jobs:
       - name: Check if update is needed
         id: check
         run: |
-          CURRENT=$(grep -oP 'denvig-\K[^"]+(?=\.tgz)' "${{ matrix.formula }}")
+          CURRENT=$(grep -oP 'denvig-\K[^"]+(?=\.tgz)' "${{ matrix.formula }}" | head -1)
+          echo "current=$CURRENT" >> "$GITHUB_OUTPUT"
           if [ "$CURRENT" = "${{ steps.npm.outputs.version }}" ]; then
             echo "skip=true" >> "$GITHUB_OUTPUT"
             echo "Already up to date ($CURRENT)"
@@ -44,11 +45,27 @@ jobs:
         if: steps.check.outputs.skip == 'false'
         run: |
           VERSION="${{ steps.npm.outputs.version }}"
-          URL="https://registry.npmjs.org/denvig/-/denvig-${VERSION}.tgz"
-          SHA256=$(curl -sL "$URL" | shasum -a 256 | awk '{print $1}')
+          CURRENT="${{ steps.check.outputs.current }}"
+          FORMULA="${{ matrix.formula }}"
 
-          sed -i "s|url \"https://registry.npmjs.org/denvig/-/.*\"|url \"${URL}\"|" "${{ matrix.formula }}"
-          sed -i "s|sha256 \".*\"|sha256 \"${SHA256}\"|" "${{ matrix.formula }}"
+          # Bump the version in every npm tarball URL. denvig and the first-party
+          # @denvig/* resources are published in lockstep at the same version, so a
+          # global replace of the old version string covers the main download and the
+          # alpha formula's resource blocks alike.
+          sed -i "s/${CURRENT}/${VERSION}/g" "$FORMULA"
+
+          # Recompute each sha256 to match the URL on the line above it. This handles the
+          # main formula download and every resource block, in both formulae.
+          ruby - "$FORMULA" <<'RUBY'
+          path = ARGV[0]
+          text = File.read(path)
+          text.gsub!(/^([ \t]*)url "([^"]+\.tgz)"(.*)\n([ \t]*)sha256 "[0-9a-f]+"/) do
+            url_indent, url, url_suffix, sha_indent = $1, $2, $3, $4
+            sha = %x(curl -sL "#{url}" | sha256sum).split.first
+            %(#{url_indent}url "#{url}"#{url_suffix}\n#{sha_indent}sha256 "#{sha}")
+          end
+          File.write(path, text)
+          RUBY
 
       - name: Create pull request
         if: steps.check.outputs.skip == 'false'
