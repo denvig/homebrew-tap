@@ -21,6 +21,13 @@ jobs:
       - name: Set up Homebrew
         uses: Homebrew/actions/setup-homebrew@master
 
+      # Homebrew 6.0 sandboxes Linux source builds with Bubblewrap and aborts when a
+      # rootless `bwrap` is not on PATH. The runner image doesn't ship it, and a brewed
+      # bubblewrap isn't picked up by the sandbox check, so install the system package.
+      - name: Install Bubblewrap (Linux sandbox)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y bubblewrap
+
       - name: Audit formula
         run: brew audit --strict ${{ matrix.formula }}
 
