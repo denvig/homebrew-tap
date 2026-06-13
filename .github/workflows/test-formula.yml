@@ -21,6 +21,18 @@ jobs:
       - name: Set up Homebrew
         uses: Homebrew/actions/setup-homebrew@master
 
+      # Homebrew 6.0 sandboxes Linux source builds with Bubblewrap and aborts when a
+      # rootless `bwrap` cannot run. The ubuntu-latest image doesn't ship bwrap, and
+      # Ubuntu 24.04 also blocks unprivileged user namespaces via AppArmor — both must
+      # be addressed before `brew install`. Install the system package, then relax the
+      # namespace restrictions so rootless Bubblewrap can create its sandbox.
+      - name: Enable Bubblewrap sandbox (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update && sudo apt-get install -y bubblewrap
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
+          sudo sysctl -w kernel.unprivileged_userns_clone=1 || true
+
       - name: Audit formula
         run: brew audit --strict ${{ matrix.formula }}
 
