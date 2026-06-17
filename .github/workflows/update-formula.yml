@@ -51,7 +51,7 @@ jobs:
           # Bump the version in every npm tarball URL. denvig and the first-party
           # @denvig/* resources are published in lockstep at the same version, so a
           # global replace of the old version string covers the main download and the
-          # alpha formula's resource blocks alike.
+          # @denvig/cli + @denvig/sdk resource blocks alike (both formulae vendor them).
           sed -i "s/${CURRENT}/${VERSION}/g" "$FORMULA"
 
           # Recompute each sha256 to match the URL on the line above it. This handles the
