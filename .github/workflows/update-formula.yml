@@ -5,7 +5,8 @@ on:
 
 jobs:
   update:
-    runs-on: ubuntu-latest
+    # Available runner images: https://github.com/actions/runner-images
+    runs-on: ubuntu-26.04
     strategy:
       fail-fast: false
       matrix:
@@ -15,7 +16,7 @@ jobs:
           - tag: alpha
             formula: Formula/denvig-alpha.rb
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           # Use a PAT (not the default GITHUB_TOKEN) so the PR this workflow
           # opens triggers the test-formula workflow. PRs created with
