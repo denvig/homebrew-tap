@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up Homebrew
-        uses: Homebrew/actions/setup-homebrew@master
+        uses: Homebrew/actions/setup-homebrew@main
 
       # Homebrew 6.0 sandboxes Linux source builds with Bubblewrap and aborts when a
       # rootless `bwrap` cannot run. The ubuntu-latest image doesn't ship bwrap, and
