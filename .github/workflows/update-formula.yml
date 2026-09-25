@@ -5,7 +5,8 @@ on:
 
 jobs:
   update:
-    runs-on: ubuntu-latest
+    # Available runner images: https://github.com/actions/runner-images
+    runs-on: ubuntu-26.04
     strategy:
       fail-fast: false
       matrix:
