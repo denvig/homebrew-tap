@@ -16,10 +16,10 @@ jobs:
         formula: [denvig, denvig-alpha]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Set up Homebrew
-        uses: Homebrew/actions/setup-homebrew@main
+        uses: Homebrew/actions/setup-homebrew@848c272c7bfe984a197bd4d16383f4c106ec61e6 # 2026.09.21.1
 
       # Homebrew 6.0 sandboxes Linux source builds with Bubblewrap and aborts when a
       # rootless `bwrap` cannot run. The ubuntu-latest image doesn't ship bwrap, and
