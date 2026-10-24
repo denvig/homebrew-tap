@@ -1,8 +1,8 @@
 class Denvig < Formula
   desc "A CLI tool to consistently manage cross-discipline projects"
   homepage "https://denvig.com"
-  url "https://registry.npmjs.org/denvig/-/denvig-0.7.4.tgz"
-  sha256 "3ce70874a1daaa98375d8a82596ef4704d7e47d3484d85e4a12e6ef0d41d5b2f"
+  url "https://registry.npmjs.org/denvig/-/denvig-0.7.5.tgz"
+  sha256 "ea545df1f3e58785263fef20358fe0ffa6de511ef69b7d9e7bb0d5c1ee347c0a"
   license "MIT"
 
   livecheck do
@@ -23,13 +23,13 @@ class Denvig < Formula
   # under the normal cooldown. These must be bumped in lockstep with the denvig url above
   # (the update-formula workflow does this automatically).
   resource "denvig-cli" do
-    url "https://registry.npmjs.org/@denvig/cli/-/cli-0.7.4.tgz", using: :nounzip
-    sha256 "050aa88996d65caa4693fa02897467f55f34343ac4b961dc8851c2c9a6573fdc"
+    url "https://registry.npmjs.org/@denvig/cli/-/cli-0.7.5.tgz", using: :nounzip
+    sha256 "4ff08952485c5c0818691259e8e875021f7fda36dd5fff30b14c7f424e223be0"
   end
 
   resource "denvig-sdk" do
-    url "https://registry.npmjs.org/@denvig/sdk/-/sdk-0.7.4.tgz", using: :nounzip
-    sha256 "707dcda5879c5b8dcfb83a5462f3c3d723bd5a4caeb155450ec6cd77c05b0955"
+    url "https://registry.npmjs.org/@denvig/sdk/-/sdk-0.7.5.tgz", using: :nounzip
+    sha256 "2a24e086c33b11d1c00c3083c688c9c08f3894e2119634384408f9a566c3ec36"
   end
 
   def install
